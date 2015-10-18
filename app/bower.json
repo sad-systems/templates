@@ -1,0 +1,16 @@
+{
+    "name": "[title]",
+ "version": "[version]",
+ "authors": [ "[author/name] <[author/email]> ([author/homepage])" ],
+ "dependencies": {
+        "bootstrap" : "",
+        "jquery"    : "1.*.*",
+        "jquery-ui" : "",
+        "underscore": "",
+        "backbone"  : "",
+        "json2-js"  : "",
+        "requirejs" : ""
+                 },
+ "devDependencies": {
+                    }
+}

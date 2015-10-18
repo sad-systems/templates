@@ -1,0 +1,31 @@
+{
+    "name": "[title]/[title]",
+    "description": "[description]",
+    "keywords": [ "" ],
+    "homepage": "[author/homepage]",
+    "type": "library",
+    "license": "",
+    "authors": [
+        {
+             "name": "[author/name]",
+            "email": "[author/email]",
+         "homepage": "[author/homepage]",
+             "role": "[author/role]"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "phpunit/phpunit": "*",
+        "yiisoft/yii": "*",
+        "digger/cradle": "*"
+    },
+    "config": {
+        "vendor-dir" : "vendor",  
+           "bin-dir" : "vendor/bin"
+    },
+    "autoload" : {
+        "classmap": [  
+            "lib"
+            ]
+    }           
+}

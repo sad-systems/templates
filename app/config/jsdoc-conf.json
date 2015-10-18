@@ -1,0 +1,29 @@
+{
+    "project" : {
+        "name":"[title]",
+      "number":"[version]",
+       "brief":"[description]",
+        "logo":"[logo]"
+    },
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "source": {
+    "include": [ "lib" ],
+    "exclude": [],
+    "includePattern": ".+\\.(js|h)$",
+    "excludePattern": ""
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "opts": {
+    "template": "[jsdoc_template]",
+    "encoding": "utf8",            
+    "destination": "doc/jsdoc",
+    "recurse": true
+    }
+}
