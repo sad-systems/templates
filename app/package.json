@@ -23,6 +23,7 @@
     "gulp-uglifycss": "",
     "gulp-rename": "",
     "gulp-concat": "",
+    "gulp-gzip": "",
     "event-stream": "",
     "minimist": ""
   }

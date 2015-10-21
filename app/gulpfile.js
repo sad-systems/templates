@@ -15,6 +15,7 @@ var min_js  = require('gulp-uglify');
 var min_css = require('gulp-uglifycss');
 var concat  = require('gulp-concat');
 var rename  = require('gulp-rename');
+var gzip    = require('gulp-gzip');
 var es      = require('event-stream');
 
 //==============================================================================
@@ -195,7 +196,8 @@ var buildCss = function (config) {
         suffix_min       : '.min',
         publish_original : true,
         publish_minify   : true,
-        publish_concat   : true
+        publish_concat   : true,
+        publish_zip      : true
     }, config);
 
     //--- Compile Less files:
@@ -248,6 +250,12 @@ var buildCss = function (config) {
         console.log('Concatinate and publish: ' + config.concat_file);
         run = run.pipe(concat(config.concat_file))
                  .pipe(gulp.dest(config.destination));
+        //--- Zip: 
+        if (config.publish_zip) { 
+            console.log('Zip and publish: ' + config.concat_file + '.gz');
+            run = run.pipe(gzip({level: 9}))
+                     .pipe(gulp.dest(config.destination));
+        }
     }
 };
 
@@ -263,7 +271,8 @@ var buildJs = function (config) {
         suffix_min       : '.min',
         publish_original : true,
         publish_minify   : false,
-        publish_concat   : true
+        publish_concat   : true,
+        publish_zip      : true
     }, config);
 
     //--- Run:
@@ -292,6 +301,12 @@ var buildJs = function (config) {
         console.log('Concatinate and publish: ' + config.concat_file);
         run = run.pipe(concat(config.concat_file))
                  .pipe(gulp.dest(config.destination));
+        //--- Zip: 
+        if (config.publish_zip) { 
+            console.log('Zip and publish: ' + config.concat_file + '.gz');
+            run = run.pipe(gzip({level: 9}))
+                     .pipe(gulp.dest(config.destination));
+        }
     }
 };
 
@@ -313,4 +328,3 @@ var mergeConfig = function (destination, source) {
 
     return destination;
 };
-
