@@ -16,9 +16,14 @@
     "jsdoc": "^3.3.0-beta3",
     "less": "",
     "node-sass": "",
-    "gulp": "",
+    "gulp": "^3.9.0",
     "gulp-less": "",
     "gulp-sass": "",
+    "gulp-uglify": "",
+    "gulp-uglifycss": "",
+    "gulp-rename": "",
+    "gulp-concat": "",
+    "event-stream": "",
     "minimist": ""
   }
 }

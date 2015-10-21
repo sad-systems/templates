@@ -1,15 +1,17 @@
 {
     "name": "[title]",
  "version": "[version]",
+ "description": "[description]",
  "authors": [ "[author/name] <[author/email]> ([author/homepage])" ],
  "dependencies": {
-        "bootstrap" : "",
         "jquery"    : "1.*.*",
         "jquery-ui" : "",
         "underscore": "",
         "backbone"  : "",
         "json2-js"  : "",
-        "requirejs" : ""
+        "respond"   : "",
+        "requirejs" : "",
+        "bootstrap" : ""
                  },
  "devDependencies": {
                     }
