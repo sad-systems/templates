@@ -22,15 +22,14 @@ var es      = require('event-stream');
 // Input params
 //==============================================================================
 
-//--- Production build configuration:
+//------------------------------------------------------------------------------
+// Production build configuration:
+//------------------------------------------------------------------------------
 
 var config_production = {
     css: {
         application_css_bundle:
         {
-            //src              : 'styles/**/*.css',
-            //src_less         : 'styles/**/*.less',
-            //src_sass         : 'styles/**/*.scss',
             src_sass         : ['styles/bootstrap.scss', 'styles/main.scss'],
             destination      : 'public_html/css',
             concat_file      : 'public.min.css',
@@ -99,7 +98,9 @@ var config_production = {
     }
 };
 
-//--- Develope build configuration:
+//------------------------------------------------------------------------------
+// Develope build configuration:
+//------------------------------------------------------------------------------
 
 var config_develope = {
     css: {
@@ -107,8 +108,7 @@ var config_develope = {
         {
             //src              : 'styles/**/*.css',
             //src_less         : 'styles/**/*.less',
-            //src_sass         : 'styles/**/*.scss',
-            src_sass         : ['styles/bootstrap.scss', 'styles/main.scss'],
+            src_sass         : 'styles/**/*.scss',
             destination      : 'public_html/css',
             concat_file      : '',
             publish_original : true,
@@ -139,39 +139,33 @@ var config_develope = {
 // Tasks
 //==============================================================================
 
-//--- Default
-
+//--- Default:
 gulp.task('default', ['build']);
 
 //--- Build all (production):
-
 gulp.task('build', ['build-css','build-js']);
-
 //--- Build css files (production):
-
 gulp.task('build-css', function () { build(config_production.css, 'css'); });
-
 //--- Build js files (production):
-
 gulp.task('build-js', function () { build(config_production.js, 'js'); });
 
-
 //--- Build all (develop):
-
 gulp.task('build-dev', ['build-css-dev','build-js-dev']);
-
 //--- Build css files (develop):
-
 gulp.task('build-css-dev', function () { build(config_develope.css, 'css'); });
-
 //--- Build js files (develop):
-
 gulp.task('build-js-dev', function () { build(config_develope.js, 'js'); });
 
 //==============================================================================
 // Build functions
 //==============================================================================
 
+/**
+ * Main build function
+ * 
+ * @param {object} config Configuration object with list of bundle objects
+ * @param {string} type   Type of files (css|js)
+ */
 var build = function (config, type) {
     var builder = buildJs;
     switch (type) {
@@ -229,36 +223,14 @@ var buildCss = function (config) {
         else      run = es.merge(run, gulp.src(config.src));
     }
     
-    if (config.publish_original) {
-        console.log('Publish css');
-        run = run.pipe(gulp.dest(config.destination));
-    }
-
+    //--- Publish original files:
+    run = publish(run, config.publish_original, config.destination, 'original files');
     //--- Minify:
-    if (config.publish_minify || config.publish_concat) {
-        console.log('Minify css');
-        run = run.pipe(min_css())
-                 .pipe(rename({suffix: config.suffix_min}));
-        if (config.publish_minify) { 
-            console.log('Publish minified css with suffix: ' + config.suffix_min);
-            run = run.pipe(gulp.dest(config.destination));
-        }
-    }
-
+    run = minify(run, config, min_css);
     //--- Concatinate:
-    if (config.publish_concat) {
-        console.log('Concatinate and publish: ' + config.concat_file);
-        run = run.pipe(concat(config.concat_file))
-                 .pipe(gulp.dest(config.destination));
-        //--- Zip: 
-        if (config.publish_zip) { 
-            console.log('Zip and publish: ' + config.concat_file + '.gz');
-            run = run.pipe(gzip({level: 9}))
-                     .pipe(gulp.dest(config.destination));
-        }
-    }
-};
+    run = concatinate(run, config);
 
+};
 
 /**
  * Function to build javascript files
@@ -276,27 +248,59 @@ var buildJs = function (config) {
     }, config);
 
     //--- Run:
-
     var run = gulp.src(config.src);
-
-    //--- Copy files:
-    if (config.publish_original) {
-        console.log('Publish original files');
-        run = run.pipe(gulp.dest(config.destination));
-    }
-
+    //--- Publish original files:
+        run = publish(run, config.publish_original, config.destination, 'original files');
     //--- Minify:
-    if (config.publish_minify || config.publish_concat) {
-        console.log('Minify js');
-        run = run.pipe(min_js())
-                 .pipe(rename({suffix: config.suffix_min}));
-        if (config.publish_minify) {
-           console.log('Publish minified js with suffix: ' + config.suffix_min);
-           run = run.pipe(gulp.dest(config.destination));
-        }
-    }
-
+        run = minify(run, config, min_js);
     //--- Concatinate:
+        run = concatinate(run, config);
+
+};
+
+/**
+ * Publish stream files
+ * 
+ * @param   {stream}  run           Input stream
+ * @param   {boolean} condition     =true to proceed
+ * @param   {array}   destination   Gulp destination
+ * @param   {string}  message       Log message
+ * @returns {stream}                Output stream
+ */
+var publish = function(run, condition, destination, message) {
+    if (condition) {
+        console.log('Publish: ' + message);
+        run = run.pipe(gulp.dest(destination));
+    }
+    return run;
+};
+
+/**
+ * Minify stream files
+ * 
+ * @param   {stream}   run      Input stream
+ * @param   {object}   config   Input configuration params
+ * @param   {function} minifier Function to minify files
+ * @returns {stream}            Output stream
+ */
+var minify = function(run, config, minifier) {
+    if (config.publish_minify || config.publish_concat) {
+        console.log('Minify');
+        run = run.pipe(minifier())
+                 .pipe(rename({suffix: config.suffix_min}));
+        run = publish(run, config.publish_minify, config.destination, 'minified with suffix: ' + config.suffix_min);     
+    }
+    return run;
+};
+
+/**
+ * Concatinate files in the gulp stream
+ * 
+ * @param {stream} run      Input stream contains files
+ * @param {object} config   Input configuration params
+ * @returns stream          Output stream
+ */
+var concatinate = function(run, config) { 
     if (config.publish_concat) {
         console.log('Concatinate and publish: ' + config.concat_file);
         run = run.pipe(concat(config.concat_file))
@@ -308,6 +312,7 @@ var buildJs = function (config) {
                      .pipe(gulp.dest(config.destination));
         }
     }
+    return run;
 };
 
 
