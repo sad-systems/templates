@@ -64,7 +64,9 @@ var config_production = {
                                 'vendor/bower/jquery/dist/jquery.min.js',
                                 'vendor/bower/jquery-ui/jquery-ui.min.js',
                                 'vendor/bower/underscore/underscore-min.js',
-                                'vendor/bower/backbone/backbone-min.js'
+                                'vendor/bower/backbone/backbone-min.js',
+                                'vendor/bower/bootstrap/dist/js/bootstrap.min.js',
+                                ''
                                ],
             destination      : 'public_html/js',
             concat_file      : 'vendor.min.js',
@@ -75,7 +77,6 @@ var config_production = {
         vendor_standalone_js:
         {
             src              : [
-                                'vendor/bower/bootstrap/dist/js/bootstrap.min.js',
                                 'vendor/bower/respond/dest/respond.min.js'
                                ],
             destination      : 'public_html/js',
@@ -229,6 +230,8 @@ var buildCss = function (config) {
     run = minify(run, config, min_css);
     //--- Concatinate:
     run = concatinate(run, config);
+    //--- Compress:
+    run = compress(run, config);
 
 };
 
@@ -255,6 +258,8 @@ var buildJs = function (config) {
         run = minify(run, config, min_js);
     //--- Concatinate:
         run = concatinate(run, config);
+    //--- Compress:
+        run = compress(run, config);
 
 };
 
@@ -294,7 +299,7 @@ var minify = function(run, config, minifier) {
 };
 
 /**
- * Concatinate files in the gulp stream
+ * Concatinate and publish files in the gulp stream
  * 
  * @param {stream} run      Input stream contains files
  * @param {object} config   Input configuration params
@@ -305,16 +310,25 @@ var concatinate = function(run, config) {
         console.log('Concatinate and publish: ' + config.concat_file);
         run = run.pipe(concat(config.concat_file))
                  .pipe(gulp.dest(config.destination));
-        //--- Zip: 
-        if (config.publish_zip) { 
-            console.log('Zip and publish: ' + config.concat_file + '.gz');
-            run = run.pipe(gzip({level: 9}))
-                     .pipe(gulp.dest(config.destination));
-        }
     }
     return run;
 };
 
+/**
+ * Compress and publish files in the gulp stream 
+ * 
+ * @param {stream} run      Input stream contains files
+ * @param {object} config   Input configuration params
+ * @returns stream          Output stream
+ */
+var compress = function(run, config) {
+    if (config.publish_zip) { 
+        console.log('Compress (gzip)');
+        run = run.pipe(gzip({level: 9}))
+                 .pipe(gulp.dest(config.destination));
+    }
+    return run;    
+};
 
 /**
  * Function to merge config objects
