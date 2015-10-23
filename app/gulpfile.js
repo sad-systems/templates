@@ -125,7 +125,9 @@ var config_develope = {
                                 'vendor/bower/jquery/dist/jquery.min.js',
                                 'vendor/bower/jquery-ui/jquery-ui.min.js',
                                 'vendor/bower/underscore/underscore-min.js',
-                                'vendor/bower/backbone/backbone-min.js'
+                                'vendor/bower/backbone/backbone-min.js',
+                                'vendor/bower/bootstrap/dist/js/bootstrap.min.js',
+                                ''
                                ],
             destination      : 'public_html/js',
             concat_file      : '',
